@@ -94,7 +94,17 @@ public class HuffmanCompression {
     }
 
     public static void main(String[] args) {
-        String input = "AMELJBELI"; // Exemple de chaîne à compresser
+        String input = "Relevé Bancaire\n" +
+                "Nom du titulaire : Sophie Moreau\n" +
+                "\n" +
+                "Numéro de compte : 4567 8901 2345 6789\n" +
+                "\n" +
+                "Adresse : 8 Rue des Fleurs, 75015 Paris\n" +
+                "Solde actuel : 2 800,00 €\n" +
+                "Historique des transactions\n" +
+                "<\n" +
+                "Date \tDescription \tDébit \tCrédit \tSolde\n" +
+                "03/09/2024"; // Exemple de chaîne à compresser
         Map<Character, String> huffmanCodes = compress(input);
 
         // Affichage des codes de Huffman
