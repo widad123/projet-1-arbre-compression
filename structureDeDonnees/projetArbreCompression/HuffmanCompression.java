@@ -1,10 +1,20 @@
 package projetArbreCompression;
 
+import org.jsoup.Jsoup;
+
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class HuffmanCompression {
+
+    public static String lireFichierHTML(String cheminFichier) throws IOException {
+        File fichier = new File(cheminFichier);
+        String texte = Jsoup.parse(fichier, "UTF-8").text();
+        return texte;
+    }
     public static List<HuffmanNode> creerListeDesArbres(Map<Character, Integer> frequences) {
         List<HuffmanNode> liste = new ArrayList<>();
         for (Map.Entry<Character, Integer> entry : frequences.entrySet()) {
