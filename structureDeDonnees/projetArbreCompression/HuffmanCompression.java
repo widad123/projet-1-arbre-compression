@@ -21,16 +21,6 @@ public class HuffmanCompression {
         return texte;
     }
 
-
-    public static List<String> lirePlusieursFichiersHTML(List<String> cheminsFichiers) throws IOException {
-        List<String> textes = new ArrayList<>();
-        for (String chemin : cheminsFichiers) {
-            String texte = lireFichierHTML(chemin);
-            textes.add(texte);
-        }
-        return textes;
-    }
-
     public static Map<Character, Integer> calculerFrequences(String texte) {
         Map<Character, Integer> frequences = new HashMap<>();
         for (char c : texte.toCharArray()) {
@@ -38,6 +28,7 @@ public class HuffmanCompression {
         }
         return frequences;
     }
+
     public static List<HuffmanNode> creerListeDesArbres(Map<Character, Integer> frequences) {
         List<HuffmanNode> liste = new ArrayList<>();
         for (Map.Entry<Character, Integer> entry : frequences.entrySet()) {
@@ -74,38 +65,13 @@ public class HuffmanCompression {
         genererCodes(root.getGauche(), code + "0", codes);
         genererCodes(root.getDroite(), code + "1", codes);
     }
+
     public static String compresserTexte(String texte, Map<Character, String> codes) {
         StringBuilder resultat = new StringBuilder();
         for (char c : texte.toCharArray()) {
             resultat.append(codes.get(c));
         }
         return resultat.toString();
-    }
-
-    public static String compresserPlusieursFichiers(List<String> fichiers) throws IOException {
-        StringBuilder compressionComplete = new StringBuilder();
-        Map<Character, Integer> frequencesGlobales = new HashMap<>();
-
-        for (String fichier : fichiers) {
-            String texte = lireFichierHTML(fichier);
-            Map<Character, Integer> frequences = calculerFrequences(texte);
-            for (Map.Entry<Character, Integer> entry : frequences.entrySet()) {
-                frequencesGlobales.put(entry.getKey(), frequencesGlobales.getOrDefault(entry.getKey(), 0) + entry.getValue());
-            }
-        }
-
-        HuffmanNode racine = construireArbreHuffman(frequencesGlobales);
-
-        Map<Character, String> codes = new HashMap<>();
-        genererCodes(racine, "", codes);
-
-        for (String fichier : fichiers) {
-            String texte = lireFichierHTML(fichier);
-            compressionComplete.append(compresserTexte(texte, codes));
-            compressionComplete.append(FILE_SEPARATOR);
-        }
-
-        return compressionComplete.toString();
     }
 
     public static String decompresserTexte(String texteCompresse, Map<String, Character> codesInverse) {
@@ -134,29 +100,24 @@ public class HuffmanCompression {
         return fichiersDecompresse;
     }
 
-
     public static void ecrireFichierHTML(String nomFichier, String contenu) throws IOException {
-        FileWriter writer = new FileWriter("/Users/boukricelina/Desktop/" + nomFichier, StandardCharsets.UTF_8);
+        FileWriter writer = new FileWriter("/Users/khati/Desktop/" + nomFichier, StandardCharsets.UTF_8);
         writer.write(contenu);
         writer.close();
     }
-    public static long tailleFichierOriginal(String cheminFichier) {
+
+    public static long tailleFichierOriginalEnBits(String cheminFichier) {
         File fichier = new File(cheminFichier);
         long tailleOctets = fichier.length();
         return tailleOctets * 8;
     }
-    public static long tailleFichierCompresse(String texteCompresse, Map<Character, String> codes) {
-        long tailleCompressee = 0;
 
-
-        for (char c : texteCompresse.toCharArray()) {
-            tailleCompressee += codes.get(c).length();
-        }
-
-        return tailleCompressee;
+    public static long tailleFichierCompresseEnBits(String texteCompresse) {
+        return texteCompresse.length();
     }
 
-    public static double calculeRatio(long tailleOriginale,long tailleCompressee ){
-        return (100*(tailleOriginale - tailleCompressee) / tailleOriginale);
+    public static double calculeRatio(long tailleOriginale, long tailleCompressee) {
+        return (100 * (tailleOriginale - tailleCompressee) / (double) tailleOriginale);
     }
+
 }
