@@ -1,109 +1,135 @@
 package projetArbreCompression;
 
-import projetArbreCompression.HuffmanCompression;
-import projetArbreCompression.HuffmanNode;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import static projetArbreCompression.HuffmanCompression.*;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        List<String> cheminsFichiers = Arrays.asList(
-                "/Users/boukricelina/Desktop/releve1.html",
-                "/Users/boukricelina/Desktop/releve2.html",
-                "/Users/boukricelina/Desktop/releve3.html"
-        );
 
-        System.out.println("Compression des fichiers HTML...");
+        String cheminDossier = "/Users/boukricelina/Desktop/MySpace/StructureDeDonnees/projet-1-arbre-compression/structureDeDonnees/projetArbreCompression/releves";
+        String nomFichierCompressé = "/Users/boukricelina/Desktop/MySpace/StructureDeDonnees/projet-1-arbre-compression/structureDeDonnees/projetArbreCompression/code/texteCompresse.txt";
+        List<String> cheminsFichiers = listerFichiersHTML(cheminDossier);
+
+        if (cheminsFichiers.isEmpty()) {
+            System.out.println("Aucun fichier HTML trouvé dans le dossier : " + cheminDossier);
+            return;
+        }
 
         Map<String, String> fichiersCompresses = new HashMap<>();
         Map<String, Long> taillesOriginales = new HashMap<>();
         Map<String, Long> taillesCompressees = new HashMap<>();
         Map<Character, Integer> frequencesGlobales = new HashMap<>();
-
-        String enteteCommun = null;
-
-
-
-        for (String cheminFichier : cheminsFichiers) {
-            String texteHTMLComplet = lireFichierHTML(cheminFichier);
-
-            String[] parties = separerEnteteEtContenu(texteHTMLComplet);
-            String entete = parties[0];
-            String contenu = parties[1];
-
-            if (enteteCommun == null) {
-                enteteCommun = entete;
-            } else if (!enteteCommun.equals(entete)) {
-                System.out.println("Les fichiers n'ont pas tous le même entête !");
-                enteteCommun = null;
-                break;
-            }
-
-            long tailleOriginale = tailleFichierOriginalEnBits(cheminFichier);
-            taillesOriginales.put(cheminFichier, tailleOriginale);
-            System.out.println("Taille originale de " + cheminFichier + " : " + tailleOriginale + " bits");
-
-            Map<Character, Integer> frequences = calculerFrequences(contenu);
-            for (Map.Entry<Character, Integer> entry : frequences.entrySet()) {
-                frequencesGlobales.put(entry.getKey(), frequencesGlobales.getOrDefault(entry.getKey(), 0) + entry.getValue());
-            }
-        }
-
-        HuffmanNode racine = construireArbreHuffman(frequencesGlobales);
         Map<Character, String> codes = new HashMap<>();
-        genererCodes(racine, "", codes);
-        fichiersCompresses = compresserPlusieursFichiers(cheminsFichiers);
-
-        /*for (String cheminFichier : cheminsFichiers) {
-            String texteHTMLComplet = lireFichierHTML(cheminFichier);
-
-            String[] parties = separerEnteteEtContenu(texteHTMLComplet);
-            String contenu = parties[1];
-
-            String texteCompresse = compresserTexte(contenu, codes);
-            double ratio = calculeRatio(taillesOriginales.get(cheminFichier), taillesCompressees.get(cheminFichier));
-            System.out.printf("Ratio de compression : %.2f%%\n", ratio);
-
-            fichiersCompresses.put(cheminFichier, texteCompresse);
-        }*/
-
-        String texteCompresseTotal = "";
-        if (enteteCommun != null) {
-            texteCompresseTotal = compresserTexte(enteteCommun, codes) + FILE_SEPARATOR;
-        }
-
-        StringBuilder texteCompresseBuilder = new StringBuilder(texteCompresseTotal);
-        for (String cheminFichier : cheminsFichiers) {
-            texteCompresseBuilder.append(fichiersCompresses.get(cheminFichier));
-            texteCompresseBuilder.append(FILE_SEPARATOR);
-        }
-        texteCompresseTotal = texteCompresseBuilder.toString();
-        System.out.println("Texte compressé total : " + texteCompresseTotal);
-
         Map<String, Character> codesInverse = new HashMap<>();
+
+        System.out.println(" ************** Démarrage du processus de compression ************** ");
+
+        // Vérification de l'entête commun et calcul des fréquences globales
+        String enteteCommun = verifyEntete(cheminsFichiers, frequencesGlobales);
+        if (enteteCommun == null || enteteCommun.isEmpty()) {
+            System.out.println("Erreur : Les fichiers n'ont pas tous le même entête.");
+            return;
+        }
+
+        System.out.println("\nEntête commun trouvé : ");
+        System.out.println(enteteCommun);
+
+        // Calcul des tailles originales avant compression
+        System.out.println("\n--- Tailles originales des fichiers avant compression ---");
+        for (String path : cheminsFichiers) {
+            long tailleOriginale = tailleFichierOriginal(path);
+            taillesOriginales.put(path, tailleOriginale);
+            System.out.println("Taille originale de " + path + " : " + tailleOriginale + " bits");
+        }
+
+        // Construction de l'arbre de Huffman à partir des fréquences globales
+        HuffmanNode racine = construireArbreHuffman(frequencesGlobales);
+
+        // Génération des codes de Huffman
+        genererCodes(racine, "", codes);
+
+        // Compression des fichiers
+        System.out.println("\n--- Compression des fichiers HTML ---");
+        fichiersCompresses = compresserPlusieursFichiers(cheminsFichiers, codes);
+
+        // Construction du texte compressé total avec l'entête
+        StringBuilder texteCompresseBuilder = new StringBuilder();
+        texteCompresseBuilder.append(compresserTexte(enteteCommun, codes)).append(FILE_SEPARATOR);
+
+        for (String path : cheminsFichiers) {
+            texteCompresseBuilder.append(fichiersCompresses.get(path)).append(FILE_SEPARATOR);
+
+            long tailleCompressee = fichiersCompresses.get(path).length();
+            taillesCompressees.put(path, tailleCompressee);
+        }
+
+        String texteCompresseTotal = texteCompresseBuilder.toString();
+        System.out.println("\nTexte compressé total : " + texteCompresseTotal);
+
+        // Sauvegarde du texte compressé dans un fichier
+        ecrireFichierCompresse(nomFichierCompressé, texteCompresseTotal);
+
+        // Calcul des tailles après compression
+        System.out.println("\n--- Tailles des fichiers après compression ---");
+        for (String path : cheminsFichiers) {
+            long tailleCompressee = taillesCompressees.get(path);
+            System.out.println("Taille compressée de " + path + " : " + tailleCompressee + " bits");
+
+            long tailleOriginale = taillesOriginales.get(path);
+            double ratio = calculeRatio(tailleOriginale, tailleCompressee);
+            System.out.printf("Ratio de compression pour %s : %.2f%%\n", path, ratio);
+        }
+
+        // Inversion des codes pour la décompression
         for (Map.Entry<Character, String> entry : codes.entrySet()) {
             codesInverse.put(entry.getValue(), entry.getKey());
         }
 
-        System.out.println("Décompression des fichiers HTML...");
+        System.out.println("\n ************** Démarrage du processus de décompression ************** ");
+
+        // Décompression des fichiers
         List<String> fichiersDecompresse = decompresserPlusieursFichiers(texteCompresseTotal, codesInverse);
+
+        // Suppression de l'entête de la liste des fichiers décompressés
         fichiersDecompresse.remove(0);
-        for (int i = 0; i < fichiersDecompresse.size(); i++) {
-            String nomFichier = "reconstitue_fichier" + (i + 1) + ".html";
-            String fichierComplet = enteteCommun != null ? enteteCommun + fichiersDecompresse.get(i) : fichiersDecompresse.get(i);
-            ecrireFichierHTML(nomFichier, fichierComplet);
-            System.out.println("Fichier " + nomFichier + " reconstitué.");
-        }
+
+        // Reconstitution des fichiers décompressés
+        reconstitueFichiers(fichiersDecompresse, enteteCommun);
+
+        System.out.println("\n************** Fin du processus **************");
     }
 
-    public static String[] separerEnteteEtContenu(String htmlComplet) {
-        String entete = htmlComplet.substring(0, htmlComplet.indexOf("<body>") + 6);
-        String contenu = htmlComplet.substring(htmlComplet.indexOf("<body>") + 6);
-        return new String[]{entete, contenu};
+    // Méthode pour lister les fichiers HTML dans un dossier
+    public static List<String> listerFichiersHTML(String dossierPath) {
+        List<String> fichiersHTML = new ArrayList<>();
+        File dossier = new File(dossierPath);
+
+        if (!dossier.isDirectory()) {
+            System.out.println("Le chemin spécifié n'est pas un dossier : " + dossierPath);
+            return fichiersHTML;
+        }
+
+        File[] fichiers = dossier.listFiles();
+        if (fichiers != null) {
+            for (File fichier : fichiers) {
+                if (fichier.isFile() && fichier.getName().endsWith(".html")) {
+                    fichiersHTML.add(fichier.getAbsolutePath());
+                }
+            }
+        }
+
+        return fichiersHTML;
+    }
+
+    public static void ecrireFichierCompresse(String nomFichier, String texteCompresse) throws IOException {
+        FileWriter writer = new FileWriter(nomFichier, StandardCharsets.UTF_8);
+        writer.write(texteCompresse);
+        writer.close();
+        System.out.println("\nLe fichier compressé a été sauvegardé sous : " + nomFichier);
     }
 }
