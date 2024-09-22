@@ -1,5 +1,6 @@
 package projetArbreCompression;
 
+import collections.Liste;
 import org.jsoup.Jsoup;
 
 import java.io.File;
@@ -74,6 +75,27 @@ public class HuffmanCompression {
         return resultat.toString();
     }
 
+    public static Map<String, String> compresserPlusieursFichiers(List<String> fichiers) throws IOException {
+        Map<String, String> fichiersCompresses = new HashMap<>();
+        Map<Character, String> codes = new HashMap<>();
+
+        for (String fichier : fichiers) {
+            String texteHTMLComplet = lireFichierHTML(fichier);
+
+            String[] parties = separerEnteteEtContenu(texteHTMLComplet);
+            String contenu = parties[1];
+
+            String texteCompresse = compresserTexte(contenu, codes);
+            fichiersCompresses.put(fichier, texteCompresse);
+            long tailleCompressee = tailleFichierCompresseEnBits(texteCompresse);
+            System.out.println("Taille compressée de " + fichier + " : " + tailleCompressee + " bits");
+
+        }
+
+
+        return fichiersCompresses;
+    }
+
     public static String decompresserTexte(String texteCompresse, Map<String, Character> codesInverse) {
         StringBuilder resultat = new StringBuilder();
         StringBuilder symboleTemp = new StringBuilder();
@@ -100,8 +122,11 @@ public class HuffmanCompression {
         return fichiersDecompresse;
     }
 
+
+
+
     public static void ecrireFichierHTML(String nomFichier, String contenu) throws IOException {
-        FileWriter writer = new FileWriter("/Users/khati/Desktop/" + nomFichier, StandardCharsets.UTF_8);
+        FileWriter writer = new FileWriter("/Users/boukricelina/Desktop/" + nomFichier, StandardCharsets.UTF_8);
         writer.write(contenu);
         writer.close();
     }
@@ -118,6 +143,11 @@ public class HuffmanCompression {
 
     public static double calculeRatio(long tailleOriginale, long tailleCompressee) {
         return (100 * (tailleOriginale - tailleCompressee) / (double) tailleOriginale);
+    }
+    public static String[] separerEnteteEtContenu(String htmlComplet) {
+        String entete = htmlComplet.substring(0, htmlComplet.indexOf("<body>") + 6);
+        String contenu = htmlComplet.substring(htmlComplet.indexOf("<body>") + 6);
+        return new String[]{entete, contenu};
     }
 
 }
