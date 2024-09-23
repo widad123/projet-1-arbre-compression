@@ -19,25 +19,17 @@ public class Main {
             System.out.println("Aucun fichier HTML trouvé dans le dossier : " + cheminDossier);
             return;
         }
-
+        Map<Character, Integer> frequencesGlobales = new HashMap<>();
+        Map<Character, String> codes = new HashMap<>();
         Map<String, String> fichiersCompresses = new HashMap<>();
         Map<String, Long> taillesOriginales = new HashMap<>();
         Map<String, Long> taillesCompressees = new HashMap<>();
-        Map<Character, Integer> frequencesGlobales = new HashMap<>();
-        Map<Character, String> codes = new HashMap<>();
         Map<String, Character> codesInverse = new HashMap<>();
 
         System.out.println(" ************** Démarrage du processus de compression ************** ");
 
         // Vérification de l'entête commun et calcul des fréquences globales
         String enteteCommun = verifyEntete(cheminsFichiers, frequencesGlobales);
-        if (enteteCommun == null || enteteCommun.isEmpty()) {
-            System.out.println("Erreur : Les fichiers n'ont pas tous le même entête.");
-            return;
-        }
-
-        System.out.println("\nEntête commun trouvé : ");
-        System.out.println(enteteCommun);
 
         // Calcul des tailles originales avant compression
         System.out.println("\n--- Tailles originales des fichiers avant compression ---");

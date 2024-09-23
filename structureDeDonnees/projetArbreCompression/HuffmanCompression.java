@@ -65,7 +65,6 @@ public class HuffmanCompression {
                 return "";
             }
 
-
             getFrequencesGlobales(contenu, frequencesGlobales);
         }
 
