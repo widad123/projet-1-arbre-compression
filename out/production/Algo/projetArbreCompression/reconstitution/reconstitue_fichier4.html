@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="fr">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Relevé Bancaire Fictif</title>
+  <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            border: 1px solid #ccc;
+            padding: 20px;
+        }
+        h1, h2 {
+            color: #2c3e50;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        .balance {
+            font-weight: bold;
+            color: #27ae60;
+        }
+        .negative {
+            color: #e74c3c;
+        }
+    </style>
+ </head>
+ <body>
+  <div class="container">
+   <h1>Relevé Bancaire</h1>
+   <h2>Nom du titulaire : Sophie Moreau</h2>
+   <p>Numéro de compte : 7890 1234 5678 3456</p>
+   <p>Adresse : 22 Boulevard de la Liberté, 59000 Lille</p>
+   <h3>Solde actuel : <span class="balance">4 200,00 €</span></h3>
+   <h2>Historique des transactions</h2>
+   <table>
+    <thead>
+     <tr>
+      <th>Date</th>
+      <th>Description</th>
+      <th>Débit</th>
+      <th>Crédit</th>
+      <th>Solde</th>
+     </tr>
+    </thead>
+    <tbody>
+     <tr>
+      <td>04/09/2024</td>
+      <td>Virement entreprise</td>
+      <td></td>
+      <td>3 200,00 €</td>
+      <td>4 200,00 €</td>
+     </tr>
+     <tr>
+      <td>31/08/2024</td>
+      <td>Paiement carte - Restaurant</td>
+      <td>120,00 €</td>
+      <td></td>
+      <td>1 000,00 €</td>
+     </tr>
+     <tr>
+      <td>28/08/2024</td>
+      <td>Achat en ligne - Électronique</td>
+      <td>850,00 €</td>
+      <td></td>
+      <td>1 120,00 €</td>
+     </tr>
+     <tr>
+      <td>22/08/2024</td>
+      <td>Paiement facture EDF</td>
+      <td>100,00 €</td>
+      <td></td>
+      <td>1 970,00 €</td>
+     </tr>
+     <tr>
+      <td>18/08/2024</td>
+      <td>Virement Paul Dubois</td>
+      <td></td>
+      <td>500,00 €</td>
+      <td>2 070,00 €</td>
+     </tr>
+    </tbody>
+   </table>
+  </div>
+ </body>
+</html>
