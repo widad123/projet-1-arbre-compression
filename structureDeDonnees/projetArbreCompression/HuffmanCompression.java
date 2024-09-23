@@ -1,6 +1,5 @@
 package projetArbreCompression;
 
-import collections.Liste;
 import org.jsoup.Jsoup;
 
 import java.io.File;
@@ -134,7 +133,7 @@ public class HuffmanCompression {
         // IOException : en cas d'erreur lors de l'écriture du fichier
 
     public static void ecrireFichierHTML(String nomFichier, String contenu) throws IOException {
-        FileWriter writer = new FileWriter("/Users/boukricelina/Desktop/MySpace/StructureDeDonnees/projet-1-arbre-compression/structureDeDonnees/projetArbreCompression/reconstitution/" + nomFichier, StandardCharsets.UTF_8);
+        FileWriter writer = new FileWriter("/Users/khati/codingfactory/Algo/structureDeDonnees/projetArbreCompression/reconstitution/" + nomFichier, StandardCharsets.UTF_8);
         writer.write(contenu);
         writer.close();
     }

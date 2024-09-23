@@ -11,8 +11,8 @@ import static projetArbreCompression.HuffmanCompression.*;
 public class Main {
     public static void main(String[] args) throws IOException {
 
-        String cheminDossier = "/Users/boukricelina/Desktop/MySpace/StructureDeDonnees/projet-1-arbre-compression/structureDeDonnees/projetArbreCompression/releves";
-        String nomFichierCompressé = "/Users/boukricelina/Desktop/MySpace/StructureDeDonnees/projet-1-arbre-compression/structureDeDonnees/projetArbreCompression/code/texteCompresse.txt";
+        String cheminDossier = "/Users/khati/codingfactory/Algo/structureDeDonnees/projetArbreCompression/releves";
+        String nomFichierCompressé = "/Users/khati/codingfactory/Algo/structureDeDonnees/projetArbreCompression/code/texteCompresse.txt";
         List<String> cheminsFichiers = listerFichiersHTML(cheminDossier);
 
         if (cheminsFichiers.isEmpty()) {
